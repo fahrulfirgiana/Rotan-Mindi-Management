@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputEmail3">Kontak</label>
-                                            <input type="tel" class="form-control @error('kontak') is-invalid @enderror"
+                                            <input type="number" class="form-control @error('kontak') is-invalid @enderror"
                                                 name="kontak" id="kontak" value="{{ $subkontraktor->contact }}"
                                                 placeholder="Masukan Kontak">
                                             @error('kontak')

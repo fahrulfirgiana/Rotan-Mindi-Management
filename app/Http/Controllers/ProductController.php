@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function view_product()
     {
-        $products = Product::paginate(1);
+        $products = Product::paginate(5);
         return view('manager.product.product', compact('products'));
     }
 
@@ -24,38 +24,44 @@ class ProductController extends Controller
     }
 
     public function add_product(Request $request)
-{
-    $messages = [
-        'product_name.required' => 'Nama Barang harus diisi.',
-        'harga.required' => 'Harga harus diisi.',
-        'harga.numeric' => 'Harga harus berupa angka.',
-        'image.required' => 'Gambar harus diupload.',
-        'image.image' => 'File harus berupa gambar.',
-        'image.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau gif.',
-        'image.max' => 'Gambar tidak boleh lebih dari 2048 kilobytes.',
-    ];
+    {
+        // Menghapus format mata uang sebelum validasi
+        $harga = str_replace('.', '', $request->harga);
 
-    $request->validate([
-        'product_name' => 'required',
-        'harga' => 'required|numeric',
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ], $messages);
+        $messages = [
+            'product_name.required' => 'Nama Barang harus diisi.',
+            'harga.required' => 'Harga harus diisi.',
+            'harga.numeric' => 'Harga harus berupa angka.',
+            'image.required' => 'Gambar harus diupload.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau gif.',
+            'image.max' => 'Gambar tidak boleh lebih dari 2048 kilobytes.',
+        ];
 
-    $order = new Product();
-    $order->product_name = $request->product_name;
-    $order->price = $request->harga;
+        // Validasi inputan
+        $request->validate([
+            'product_name' => 'required',
+            'harga' => 'required|numeric',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], $messages);
 
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imagename = time() . '.' . $image->getClientOriginalExtension();
-        $image->move('order', $imagename);
-        $order->image = $imagename;
+        // Menyimpan data ke database
+        $product = new Product();
+        $product->product_name = $request->product_name;
+        $product->price = (int) $harga; // Menyimpan harga sebagai integer
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move('order', $imagename);
+            $product->image = $imagename;
+        }
+
+        $product->save();
+        Alert::success('Berhasil', 'Produk Telah Berhasil Ditambahkan');
+        return Redirect::to('/view_product')->with('success', 'Product added successfully');
     }
 
-    $order->save();
-    Alert::success('Berhasil', 'Produk Telah Berhasil Ditambahkan');
-    return Redirect::to('/view_product')->with('success', 'Product added successfully');
-}
 
 
     public function edit_product($id)

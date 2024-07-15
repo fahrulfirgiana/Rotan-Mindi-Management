@@ -15,7 +15,7 @@
             <div class="main">
                 @include('manager.navbar')
 
-                <main class="content">
+                <main class="content" style="padding: 10px">
                     <div class="container-fluid p-0">
                         <div class="container-fluid py-1">
                             <div class="container">
@@ -35,7 +35,7 @@
                                                 <p></p>
                                             </div>
                                             <div class="table-responsive">
-                                                <table class="table">
+                                                <table class="table table-striped table-hover">
                                                     <thead>
                                                         <tr>
                                                             <th>Nama Barang</th>
@@ -51,7 +51,7 @@
                                                             <td>
                                                                 <img style="max-width: 50px; max-height:50px text-align:" class="img" src="{{ url('order') . '/' . $product->image }}" alt="">
                                                             </td>
-                                                            <td>{{ $product->price }}</td>
+                                                            <td>@currency($product->price)</td>
                                                             <td>
                                                                     <a class="btn-edit" href='{{ url('edit_product', $product->id) }}' title="Edit"><i class="fa-regular fa-pen-to-square" data-feather="edit"></i></a>
                                                                     <a onclick="confirmation(event)" class="btn-hapus" href="{{ url('delete_product', $product->id)}}" title="Delete"><i class="fa-solid fa-trash" data-feather="trash-2"></i></a>                                                            </td>

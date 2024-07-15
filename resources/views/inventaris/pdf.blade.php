@@ -13,41 +13,57 @@
             padding: 8px;
             text-align: center;
         }
+        img {
+            max-width: 100px;
+            max-height: 100px;
+        }
     </style>
 </head>
 <body>
     <h2>Data Pesanan</h2>
+    @php
+        $totalPrice = 0;
+    @endphp
     <table>
         <thead>
             <tr>
-                <th>Kode</th>
+                <th>Nama Barang</th>
+                <th>Gambar</th>
                 <th>Ukuran</th>
                 <th>Kuantitas</th>
+                <th>Batas Waktu</th>
                 <th>Harga</th>
                 <th>Total</th>
-                <th>Batas Waktu</th>
-                <th>Progress</th>
-                <th>Sub-Kontraktor</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($orders as $order)
             <tr>
                 <td>{{ $order->product_name }}</td>
+                <td>
+                    @if($order->image)
+                        <img src="{{ public_path('order/' . $order->image) }}" alt="">
+                    @else
+                        No Image
+                    @endif
+                </td>
                 <td>{{ $order->size }}</td>
                 <td>{{ $order->quantity }}</td>
+                <td>{{ $order->deadline }}</td>
                 <td>@currency($order->price)</td>
                 <td>@currency($order->total_price)</td>
-                <td>{{ $order->deadline }}</td>
-                <td>{{ $order->progress ?? 'kosong' }}</td>
-                <td>{{ $order->subkontraktor_name ?? 'kosong' }}</td>
-                <td>
-                    {!! $order->status == 'Selesai' ? '<span class="badge bg-success">Selesai</span>' : ($order->status == 'Belum Selesai' ? '<span class="badge bg-warning">Belum Selesai</span>' : ($order->status ?? 'kosong')) !!}
-                </td>
             </tr>
+            @php
+                $totalPrice += $order->total_price;
+            @endphp
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6"><strong>Total</strong></td>
+                <td><strong>@currency($totalPrice)</strong></td>
+            </tr>
+        </tfoot>
     </table>
 </body>
 </html>

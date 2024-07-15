@@ -26,14 +26,15 @@
                                                 </div>
                                                 <div class="btn-i">
                                                     <a class="btn btn-secondary btn-sm"
-                                                        href="{{ url('show_subkontraktor') }}"><i
-                                                            class="fa-solid fa-plus" data-feather="plus">></i> Tambah
+                                                        href="{{ url('show_subkontraktor') }}"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px">
+                                                            add_circle
+                                                            </span> Tambah
                                                         Data</a>
                                                 </div>
                                                 <p></p>
                                             </div>
                                             <div class="table-responsive">
-                                                <table class="table" style="text-align: center">
+                                                <table class="table table-striped table-hover" style="text-align: center">
                                                     <thead>
                                                         <tr>
                                                             <th>Nama</th>
@@ -64,54 +65,55 @@
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
+                                                    
                                                 </table>
-                                            </div>
-                                            <div class="pagination">
-                                                @if ($subkontraktors->onFirstPage())
-                                                    <span>&laquo;</span>
-                                                @else
-                                                    <a href="{{ $subkontraktors->previousPageUrl() }}"
-                                                        rel="prev">&laquo;</a>
-                                                @endif
-
-                                                @php
-                                                    $start = max(1, $subkontraktors->currentPage() - 2);
-                                                    $end = min(
-                                                        $subkontraktors->lastPage(),
-                                                        $subkontraktors->currentPage() + 2,
-                                                    );
-                                                @endphp
-
-                                                @if ($start > 1)
-                                                    <a href="{{ $subkontraktors->url(1) }}">1</a>
-                                                    @if ($start > 2)
-                                                        <span>...</span>
-                                                    @endif
-                                                @endif
-
-                                                @for ($page = $start; $page <= $end; $page++)
-                                                    @if ($page == $subkontraktors->currentPage())
-                                                        <a class="active">{{ $page }}</a>
+                                                <div class="pagination">
+                                                    @if ($subkontraktors->onFirstPage())
+                                                        <span>&laquo;</span>
                                                     @else
+                                                        <a href="{{ $subkontraktors->previousPageUrl() }}"
+                                                            rel="prev">&laquo;</a>
+                                                    @endif
+    
+                                                    @php
+                                                        $start = max(1, $subkontraktors->currentPage() - 2);
+                                                        $end = min(
+                                                            $subkontraktors->lastPage(),
+                                                            $subkontraktors->currentPage() + 2,
+                                                        );
+                                                    @endphp
+    
+                                                    @if ($start > 1)
+                                                        <a href="{{ $subkontraktors->url(1) }}">1</a>
+                                                        @if ($start > 2)
+                                                            <span>...</span>
+                                                        @endif
+                                                    @endif
+    
+                                                    @for ($page = $start; $page <= $end; $page++)
+                                                        @if ($page == $subkontraktors->currentPage())
+                                                            <a class="active">{{ $page }}</a>
+                                                        @else
+                                                            <a
+                                                                href="{{ $subkontraktors->url($page) }}">{{ $page }}</a>
+                                                        @endif
+                                                    @endfor
+    
+                                                    @if ($end < $subkontraktors->lastPage())
+                                                        @if ($end < $subkontraktors->lastPage() - 1)
+                                                            <span>...</span>
+                                                        @endif
                                                         <a
-                                                            href="{{ $subkontraktors->url($page) }}">{{ $page }}</a>
+                                                            href="{{ $subkontraktors->url($subkontraktors->lastPage()) }}">{{ $subkontraktors->lastPage() }}</a>
                                                     @endif
-                                                @endfor
-
-                                                @if ($end < $subkontraktors->lastPage())
-                                                    @if ($end < $subkontraktors->lastPage() - 1)
-                                                        <span>...</span>
+    
+                                                    @if ($subkontraktors->hasMorePages())
+                                                        <a href="{{ $subkontraktors->nextPageUrl() }}"
+                                                            rel="next">&raquo;</a>
+                                                    @else
+                                                        <span>&raquo;</span>
                                                     @endif
-                                                    <a
-                                                        href="{{ $subkontraktors->url($subkontraktors->lastPage()) }}">{{ $subkontraktors->lastPage() }}</a>
-                                                @endif
-
-                                                @if ($subkontraktors->hasMorePages())
-                                                    <a href="{{ $subkontraktors->nextPageUrl() }}"
-                                                        rel="next">&raquo;</a>
-                                                @else
-                                                    <span>&raquo;</span>
-                                                @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -55,8 +55,8 @@
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputName1">Harga</label>
-                                            <input type="number" class="form-control" id="harga" name="harga" min="0"
-                                                placeholder="Harga">
+                                            <input type="hidden" name="harga" id="harga" /> <!-- Input tersembunyi -->
+                                            <input type="text" id="harga_format" class="form-control" placeholder="Masukkan Harga" /> <!-- Input untuk pengguna -->
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputName1">Batas Waktu</label>
@@ -92,10 +92,35 @@
             @foreach ($product as $prod)
                 if ("{{ $prod->product_name }}" == productName) {
                     document.getElementById('harga').value = "{{ $prod->price }}";
+                    document.getElementById('harga_format').value = formatRupiah("{{ $prod->price }}", 'Rp. ');
                     document.getElementById('preview').src = "{{ asset('order/'.$prod->image) }}";
-                    // Ganti 'preview' dengan id yang sesuai untuk preview gambar di form
                 }
             @endforeach
+        }
+
+        var hargaFormatted = document.getElementById('harga_format');
+        var harga = document.getElementById('harga');
+
+        hargaFormatted.addEventListener('keyup', function(e) {
+            var value = this.value.replace(/[^,\d]/g, ''); // Menghapus semua karakter non-angka
+            harga.value = value; // Menyimpan nilai asli di input tersembunyi
+            this.value = formatRupiah(value, 'Rp. '); // Menampilkan nilai yang diformat
+        });
+
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.toString().replace(/[^,\d]/g, ''),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                var separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
         }
     </script>
 </body>

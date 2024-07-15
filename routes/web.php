@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/beranda', [HomeController::class, 'beranda']);
 
 Route::get('/view_order', [HomeController::class, 'view_order']);
+Route::get('/orders', [HomeController::class, 'view_order'])->name('orders.index');
 Route::get('/view_addorder', [HomeController::class, 'view_addorder']);
 Route::post('add_order', [HomeController::class, 'add_order']);
 Route::get('/edit_order/{id}', [HomeController::class, 'edit_order']);
@@ -44,7 +45,8 @@ Route::get('/delete_product/{id}', [ProductController::class, 'delete_product'])
 
 Route::get('/view_kontraktor', [ProductController::class, 'view_kontraktor']);
 
-Route::get('/show_order', [InventarisController::class, 'show_order']);
+Route::get('/show_order', [InventarisController::class, 'show_order'])->name('show.order');
+Route::get('/show_order', [InventarisController::class, 'show_order'])->name('orders.show');
 Route::get('/edit_pesanan/{id}', [InventarisController::class, 'edit_pesanan']);
 Route::post('/update_pesanan/{id}', [InventarisController::class, 'update_pesanan']);
 Route::get('/filter_order', [InventarisController::class, 'show_order'])->name('filter_order');
@@ -55,12 +57,12 @@ Route::get('/show_subkontraktor', [InventarisController::class, 'show_subkontrak
 Route::post('/add_subkontraktor', [InventarisController::class, 'add_subkontraktor']);
 Route::get('/edit_sub/{id}', [InventarisController::class, 'edit_sub']);
 Route::post('/update_sub/{id}', [InventarisController::class, 'update_sub']);
+Route::get('/delete_sub/{id}', [InventarisController::class, 'delete_sub']);
 
 
 
 
-Route::resource('subkontraktor', SubkontraktorController::class);
-Route::resource('stok', StokController::class);
+
 
 require __DIR__.'/auth.php';
 

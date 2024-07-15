@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Orders;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -66,9 +67,16 @@ class HomeController extends Controller
         return view('manager.dashboard', compact('order', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders'));
     }
 
-    public function view_order()
+    public function view_order(Request $request)
     {
-        $orders = Orders::paginate(2); 
+        if ($request->start_date || $request->end_date) {
+            $start_date = Carbon::parse($request->start_date)->startOfDay()->toDateTimeString();
+            $end_date = Carbon::parse($request->end_date)->endOfDay()->toDateTimeString();
+            $orders = Orders::whereBetween('created_at', [$start_date, $end_date])->paginate(8);
+        } else {
+            $orders = Orders::paginate(5);
+        }
+
         return view('manager.orders.order', compact('orders'));
     }
 

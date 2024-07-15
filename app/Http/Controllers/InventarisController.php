@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Orders;
@@ -11,6 +12,7 @@ use App\Models\Subcontractors;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Subkontraktor;
 use Illuminate\Support\Facades\Redirect;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
@@ -50,18 +52,26 @@ class InventarisController extends Controller
     }
 
     public function show_order(Request $request)
-{
-    $subkontraktors = Orders::select('subkontraktor_name')->distinct()->get();
-    $query = Orders::query();
-
-    if ($request->has('subkontraktor') && $request->subkontraktor != '') {
-        $query->where('subkontraktor_name', $request->subkontraktor);
+    {
+        $subkontraktors = Subcontractors::select('id', 'subkontraktor_name', 'contact')->distinct()->get();
+        $query = Orders::query();
+    
+        if ($request->has('subkontraktor') && $request->subkontraktor != '') {
+            $query->where('subkontraktor_name', $request->subkontraktor);
+        }
+    
+        if ($request->start_date || $request->end_date) {
+            $start_date = Carbon::parse($request->start_date)->startOfDay()->toDateTimeString();
+            $end_date = Carbon::parse($request->end_date)->endOfDay()->toDateTimeString();
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+    
+        $orders = $query->paginate(5);
+    
+        return view('inventaris.pesanan.order', compact('orders', 'subkontraktors'));
     }
+    
 
-    $orders = $query->paginate(5); 
-
-    return view('inventaris.pesanan.order', compact('orders', 'subkontraktors'));
-}
 
 
     public function edit_pesanan($id)
@@ -113,25 +123,39 @@ class InventarisController extends Controller
 }
 
 
-    public function exportPDF(Request $request)
+public function exportPDF(Request $request)
 {
+    set_time_limit(300); // Set to 5 minutes
+
     $query = Orders::query();
 
     if ($request->has('subkontraktor') && $request->subkontraktor != '') {
         $query->where('subkontraktor_name', $request->subkontraktor);
     }
 
+    if ($request->start_date || $request->end_date) {
+        $start_date = Carbon::parse($request->start_date)->startOfDay()->toDateTimeString();
+        $end_date = Carbon::parse($request->end_date)->endOfDay()->toDateTimeString();
+        $query->whereBetween('created_at', [$start_date, $end_date]);
+    }
+
     $orders = $query->get();
 
     $pdf = Pdf::loadView('inventaris.pdf', compact('orders'));
-    return $pdf->download('orders.pdf');
+    $fileName = 'orders.pdf';
+    $filePath = storage_path($fileName);
+
+    $pdf->save($filePath);
+
+    return response()->download($filePath)->deleteFileAfterSend(true);
 }
+
 
     // SECTION SUB-KONTRAKTOR
 
     public function show_kontraktor()
     {
-        $subkontraktors = Subcontractors::paginate(4);
+        $subkontraktors = Subcontractors::paginate(5);
         return view('inventaris.subkontraktor.index', compact('subkontraktors'));
     }
 
@@ -148,7 +172,7 @@ class InventarisController extends Controller
         'nama.string' => 'Nama subkontraktor harus berupa teks.',
         'nama.regex' => 'Nama subkontraktor harus hanya berisi huruf.',
         'kontak.required' => 'Kontak harus diisi.',
-        'kontak.integer' => 'Kontak harus berupa angka.',
+        'kontak.numeric' => 'Kontak harus berupa angka.',
         'pekerja.required' => 'Jumlah pekerja harus diisi.',
         'pekerja.integer' => 'Jumlah pekerja harus berupa angka.',
         'bahan.required' => 'Stok bahan harus diisi.',
@@ -156,7 +180,7 @@ class InventarisController extends Controller
 
     $validator = Validator::make($request->all(), [
         'nama' => ['required', 'string', 'regex:/^[a-zA-Z ]+$/u', 'max:255'],
-        'kontak' => ['required','integer'],
+        'kontak' => ['required', 'numeric'], // Menggunakan 'numeric' untuk validasi kontak
         'pekerja' => ['required', 'integer'],
         'bahan' => ['required'],
     ], $messages);
@@ -217,4 +241,12 @@ class InventarisController extends Controller
         Alert::success('Berhasil', 'Subkontraktor Telah Berhasil Diedit');
         return Redirect::to('/show_kontraktor')->with('success', 'Order updated successfully');
     }
+
+    public function delete_sub($id)
+    {
+        Subcontractors::where('id', $id)->delete();
+        //Alert::success('Berhasil', 'Hapus Data Produk Berhasil');
+        return redirect()->back()->with('success', 'Berhasil hapus data');
+    }
+
 }

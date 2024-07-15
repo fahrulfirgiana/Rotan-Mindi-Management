@@ -81,7 +81,7 @@
 </script>
 
 
-<script>
+{{-- <script>
     document.getElementById('subkontraktor').addEventListener('change', function() {
         var filterValue = this.value.toLowerCase();
         var rows = document.querySelectorAll('tbody tr');
@@ -96,7 +96,7 @@
         var filterValue = document.getElementById('subkontraktor').value;
         window.location.href = '{{ route('export.pdf') }}?subkontraktor=' + filterValue;
     });
-</script>
+</script> --}}
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
