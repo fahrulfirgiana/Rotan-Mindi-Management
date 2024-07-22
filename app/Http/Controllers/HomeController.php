@@ -15,56 +15,85 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $order = Orders::all();
-        $orders = DB::table('orders')->get();
+        $orders = DB::table('orders')
+        ->select('id','product_name', 'quantity', 'deadline', 'progress')
+        ->get();
 
-        // Hitung total pesanan
-        $totalOrders = $orders->count();
-        // Menghitung total produksi dari tabel orders
-        $totalProduction = DB::table('orders')->sum('progress');
-        // Menghitung total produk dari tabel products
-        $totalProducts = DB::table('products')->count();
-        // Menghitung total subkontraktor dari tabel subcontractors
-        $totalSubcontractors = DB::table('subcontractors')->count();
-        // Mengambil tiga produk terpopuler
-        $topProducts = DB::table('orders')
-            ->select('product_name', DB::raw('SUM(progress) as total_quantity'))
-            ->groupBy('product_name')
-            ->orderByDesc('total_quantity')
-            ->limit(3)
-            ->get();
-        // Menghitung total pesanan per bulan
-        $monthlyOrders = DB::table('orders')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as total_orders'))
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('total_orders', 'month');
+    // Tambahkan logika untuk menghitung sedang_progress
+    $orders = $orders->map(function ($order) {
+        $order->sedang_progress = $this->calculateProgress($order);
+        return $order;
+    });
 
-        // Mengirimkan data ke view
-        return view('manager.dashboard', compact('order', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders'));
-    }
+    $totalOrders = $orders->count();
+    $totalProduction = DB::table('orders')->sum('progress');
+    $totalProducts = DB::table('products')->count();
+    $totalSubcontractors = DB::table('subcontractors')->count();
+    $topProducts = DB::table('orders')
+        ->select('product_name', DB::raw('SUM(progress) as total_quantity'))
+        ->groupBy('product_name')
+        ->orderByDesc('total_quantity')
+        ->limit(3)
+        ->get();
+    $monthlyOrders = DB::table('orders')
+        ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as total_orders'))
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->pluck('total_orders', 'month');
+    $productions = DB::table('orders')
+        ->select('product_name',
+                    DB::raw('SUM(progress) as total_production'),
+                    DB::raw('SUM(quantity) as total_quantity'),
+                    DB::raw('SUM(quantity) - SUM(progress) as total_in_progress'))
+        ->groupBy('product_name', 'image')
+        ->get();
+    $totalInProgress = $productions->sum('total_in_progress');
+
+    return view('manager.dashboard', compact('orders', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders', 'productions', 'totalInProgress'));
+}
+
+private function calculateProgress($order)
+{
+    // Implementasikan logika Anda untuk menghitung sedang_progress di sini
+    return $order->quantity - $order->progress;
+}
 
     public function beranda()
     {
         $order = Orders::all();
-        $orders = DB::table('orders')->get();
+        $orders = DB::table('orders')
+        ->select('id','product_name', 'quantity', 'deadline', 'progress')
+        ->get();
 
-        $totalOrders = $orders->count();
-        $totalProduction = DB::table('orders')->sum('progress');
-        $totalProducts = DB::table('products')->count();
-        $totalSubcontractors = DB::table('subcontractors')->count();
-        $topProducts = DB::table('orders')
-            ->select('product_name', DB::raw('SUM(progress) as total_quantity'))
-            ->groupBy('product_name')
-            ->orderByDesc('total_quantity')
-            ->limit(3)
-            ->get();
+    // Tambahkan logika untuk menghitung sedang_progress
+    $orders = $orders->map(function ($order) {
+        $order->sedang_progress = $this->calculateProgress($order);
+        return $order;
+    });
 
-        $monthlyOrders = DB::table('orders')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as total_orders'))
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('total_orders', 'month');
+    $totalOrders = $orders->count();
+    $totalProduction = DB::table('orders')->sum('progress');
+    $totalProducts = DB::table('products')->count();
+    $totalSubcontractors = DB::table('subcontractors')->count();
+    $topProducts = DB::table('orders')
+        ->select('product_name', DB::raw('SUM(progress) as total_quantity'))
+        ->groupBy('product_name')
+        ->orderByDesc('total_quantity')
+        ->limit(3)
+        ->get();
+    $monthlyOrders = DB::table('orders')
+        ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as total_orders'))
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->pluck('total_orders', 'month');
+    $productions = DB::table('orders')
+        ->select('product_name',
+                    DB::raw('SUM(progress) as total_production'),
+                    DB::raw('SUM(quantity) as total_quantity'),
+                    DB::raw('SUM(quantity) - SUM(progress) as total_in_progress'))
+        ->groupBy('product_name', 'image')
+        ->get();
+    $totalInProgress = $productions->sum('total_in_progress');
 
-        return view('manager.dashboard', compact('order', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders'));
+    return view('manager.dashboard', compact('orders', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders', 'productions', 'totalInProgress'));
     }
 
     public function view_order(Request $request)
@@ -163,6 +192,8 @@ class HomeController extends Controller
         $order->price = $request->harga;
         $order->total_price = $order->quantity * $order->price;
         $order->deadline = $request->deadline;
+        $order->customer_name = $request->cus_name;
+        $order->address = $request->address;
 
         $product = Product::where('product_name', $request->product_name)->first();
         if ($product) {

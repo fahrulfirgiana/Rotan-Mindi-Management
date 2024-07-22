@@ -22,36 +22,32 @@
                                 </div>
                                 <div style="border-radius:20px">
                                     @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                     @endif
-                                    <form class="forms-sample" action="{{ url('/add_order') }}" method="POST"
-                                        enctype="multipart/form-data">
+                                    <form class="forms-sample" action="{{ url('/add_order') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputName1">Nama Barang</label>
-                                            <select class="form-control" name="produk" id="produk"
-                                                onchange="changeValue(this.value)">
+                                            <select class="form-control" name="produk" id="produk" onchange="changeValue(this.value)">
                                                 <option value="">Pilih Produk</option>
                                                 @foreach ($product as $prod)
-                                                    <option value="{{ $prod->product_name }}">{{ $prod->product_name }}</option>
+                                                <option value="{{ $prod->product_name }}">{{ $prod->product_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputEmail3">Ukuran</label>
-                                            <input type="text" class="form-control" name="ukuran" id="ukuran"
-                                                placeholder="Ukuran">
+                                            <input type="text" class="form-control" name="ukuran" id="ukuran" placeholder="Ukuran">
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputPassword4">Kuantitas</label>
-                                            <input type="number" class="form-control" name="kuantitas" id="kuantitas"
-                                                placeholder="Kuantitas">
+                                            <input type="number" class="form-control" name="kuantitas" id="kuantitas" placeholder="Kuantitas">
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputName1">Harga</label>
@@ -60,14 +56,20 @@
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label for="exampleInputName1">Batas Waktu</label>
-                                            <input type="date" class="form-control" name="deadline" id="deadline"
-                                                placeholder="Batas Waktu">
+                                            <input type="date" class="form-control" name="deadline" id="deadline" placeholder="Batas Waktu">
+                                        </div>
+                                        <div class="form-group cs-rl">
+                                            <label for="exampleInputName1">Nama Pembeli</label>
+                                            <input type="text" class="form-control" name="customer_name" id="customer_name" placeholder="Nama Pembeli">
+                                        </div>
+                                        <div class="form-group cs-rl">
+                                            <label for="exampleInputName1">Alamat</label>
+                                            <input type="text" class="form-control" name="address" id="address" placeholder="Alamat">
                                         </div>
                                         <div class="form-group cs-rl">
                                             <label>Gambar</label>
                                             <br>
-                                            <img class="img-padding-left" id="preview" src="{{ asset('order/preview.jpeg') }}"
-                                                style="max-width: 100px; max-height:100px">
+                                            <img class="img-padding-left" id="preview" src="{{ asset('order/preview.jpeg') }}" style="max-width: 100px; max-height:100px">
                                         </div>
                                         <div class="btn-i">
                                             <button type="submit" class="btn btn-dark">Simpan</button>
@@ -90,11 +92,11 @@
     <script>
         function changeValue(productName) {
             @foreach ($product as $prod)
-                if ("{{ $prod->product_name }}" == productName) {
-                    document.getElementById('harga').value = "{{ $prod->price }}";
-                    document.getElementById('harga_format').value = formatRupiah("{{ $prod->price }}", 'Rp. ');
-                    document.getElementById('preview').src = "{{ asset('order/'.$prod->image) }}";
-                }
+            if ("{{ $prod->product_name }}" == productName) {
+                document.getElementById('harga').value = "{{ $prod->price }}";
+                document.getElementById('harga_format').value = formatRupiah("{{ $prod->price }}", 'Rp. ');
+                document.getElementById('preview').src = "{{ asset('order/'.$prod->image) }}";
+            }
             @endforeach
         }
 

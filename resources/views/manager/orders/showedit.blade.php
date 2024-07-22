@@ -58,6 +58,14 @@
                                             <input type="date" class="form-control" name="deadline" id="exampleInputName1" placeholder="Batas Waktu" value="{{ $order->deadline }}">
                                         </div>
                                         <div class="form-group cs-rl">
+                                            <label for="exampleInputName1">Nama Kustomer</label>
+                                            <input type="text" class="form-control" name="cus_name" id="exampleInputName1" placeholder="Nama Kustomer" value="{{ $order->customer_name }}">
+                                        </div>
+                                        <div class="form-group cs-rl">
+                                            <label for="exampleInputName1">Alamat</label>
+                                            <input type="text" class="form-control" name="address" id="exampleInputName1" placeholder="Alamat" value="{{ $order->address }}">
+                                        </div>
+                                        <div class="form-group cs-rl">
                                             <label>Gambar</label>
                                             <br>
                                             <img class="img-padding-left" id="preview" src="/order/{{ $order->image }}"

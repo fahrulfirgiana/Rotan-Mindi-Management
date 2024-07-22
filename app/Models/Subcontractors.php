@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcontractors extends Model
 {
-    use HasFactory;
+    protected $fillable = ['subkontraktor_name', 'contact', 'employee', ];
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class, 'subcontractor_id');
+    }
 }

@@ -98,6 +98,8 @@
                                                                     <li><label class="dropdown-item"><input type="checkbox" id="toggle-all"> Semua</label></li>
                                                                     <li><label class="dropdown-item"><input type="checkbox" class="column-toggle" data-column="progress-column"> Progress</label></li>
                                                                     <li><label class="dropdown-item"><input type="checkbox" class="column-toggle" data-column="subkontraktor-column"> Sub-Kontraktor</label></li>
+                                                                    <li><label class="dropdown-item"><input type="checkbox" class="column-toggle" data-column="customer_name-column"> Nama Pembeli</label></li>
+                                                                    <li><label class="dropdown-item"><input type="checkbox" class="column-toggle" data-column="address-column"> Alamat</label></li>
                                                                     <li><label class="dropdown-item"><input type="checkbox" class="column-toggle" data-column="status-column"> Status</label></li>
                                                                 </ul>
                                                             </div>
@@ -118,8 +120,9 @@
                                                                 <th>Total</th>
                                                                 <th>Batas Waktu</th>
                                                                 <th class="progress-column hidden">Progress</th>
-                                                                <th class="subkontraktor-column hidden">Sub-Kontraktor
-                                                                </th>
+                                                                <th class="subkontraktor-column hidden">Sub-Kontraktor</th>
+                                                                <th class="customer_name-column hidden">Pembeli</th>
+                                                                <th class="address-column hidden">Alamat</th>
                                                                 <th class="status-column hidden">Status</th>
                                                                 <th>Aksi</th>
                                                             </tr>
@@ -139,6 +142,8 @@
                                                                         {{ $item->progress ?? 'kosong' }}</td>
                                                                     <td class="subkontraktor-column hidden">
                                                                         {{ $item->subkontraktor_name ?? 'kosong' }}</td>
+                                                            <td  class="customer_name-column hidden">{{ $item->customer_name }}</td>
+                                                            <td  class="address-column hidden">{{ $item->address }}</td>
                                                                     <td class="status-column hidden">
                                                                         {!! $item->status == 'Selesai'
                                                                             ? '<span class="badge bg-success">Selesai</span>'

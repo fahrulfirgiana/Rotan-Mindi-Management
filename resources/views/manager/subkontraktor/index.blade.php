@@ -32,7 +32,7 @@
                                     <th>Nama</th>
                                     <th>Kontak</th>
                                     <th>Pekerja</th>
-                                    <th>Bahan Baku</th>
+                                    <th>Aksi</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -41,7 +41,9 @@
                                     <td>{{$subkontraktor->subkontraktor_name}}</td>
                                     <td>{{$subkontraktor->contact}}</td>
                                     <td>{{$subkontraktor->employee}}</td>
-                                    <td>{{$subkontraktor->stock}}</td>
+                                    <td>  
+                                        <a class="btn-edit" href="{{ url('showDetail', $subkontraktor->id) }}" title="Detail"><i class="fa-regular fa-eye" data-feather="info"></i></a>
+                                    </td>
                                   </tr>
                                   @endforeach
                                 </tbody>

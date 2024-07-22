@@ -2,73 +2,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var markers = [{
-                coords: [31.230391, 121.473701],
-                name: "Shanghai"
-            },
-            {
-                coords: [28.704060, 77.102493],
-                name: "Delhi"
-            },
-            {
-                coords: [6.524379, 3.379206],
-                name: "Lagos"
-            },
-            {
-                coords: [35.689487, 139.691711],
-                name: "Tokyo"
-            },
-            {
-                coords: [23.129110, 113.264381],
-                name: "Guangzhou"
-            },
-            {
-                coords: [40.7127837, -74.0059413],
-                name: "New York"
-            },
-            {
-                coords: [34.052235, -118.243683],
-                name: "Los Angeles"
-            },
-            {
-                coords: [41.878113, -87.629799],
-                name: "Chicago"
-            },
-            {
-                coords: [51.507351, -0.127758],
-                name: "London"
-            },
-            {
-                coords: [40.416775, -3.703790],
-                name: "Madrid "
-            }
-        ];
-        var map = new jsVectorMap({
-            map: "world",
-            selector: "#world_map",
-            zoomButtons: true,
-            markers: markers,
-            markerStyle: {
-                initial: {
-                    r: 9,
-                    strokeWidth: 7,
-                    stokeOpacity: .4,
-                    fill: window.theme.primary
-                },
-                hover: {
-                    fill: window.theme.primary,
-                    stroke: window.theme.primary
-                }
-            },
-            zoomOnScroll: false
-        });
-        window.addEventListener("resize", () => {
-            map.updateSize();
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
         var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
         var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
         document.getElementById("datetimepicker-dashboard").flatpickr({
@@ -80,23 +13,20 @@
     });
 </script>
 
+<script>
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
 
-{{-- <script>
-    document.getElementById('subkontraktor').addEventListener('change', function() {
-        var filterValue = this.value.toLowerCase();
-        var rows = document.querySelectorAll('tbody tr');
-        rows.forEach(function(row) {
-            var subkontraktorName = row.querySelector('.subkontraktor-column').textContent
-        .toLowerCase();
-            row.style.display = subkontraktorName.includes(filterValue) ? '' : 'none';
-        });
-    });
+        reader.onload = function(e) {
+            var preview = document.getElementById('preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
 
-    document.getElementById('exportPDF').addEventListener('click', function() {
-        var filterValue = document.getElementById('subkontraktor').value;
-        window.location.href = '{{ route('export.pdf') }}?subkontraktor=' + filterValue;
+        reader.readAsDataURL(file);
     });
-</script> --}}
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -135,48 +65,89 @@
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: "btn btn-success",
-            cancelButton: "btn btn-danger"
-        },
-        buttonsStyling: false
+    // JavaScript to toggle column visibility
+    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var columnClass = this.getAttribute('data-column');
+            var columns = document.querySelectorAll('.' + columnClass);
+            columns.forEach(function(column) {
+                column.classList.toggle('hidden', !checkbox.checked);
+            });
+        });
     });
 
-    function confirmation(event) {
-        event.preventDefault();
-        const urlToRedirect = event.currentTarget.getAttribute('href');
-
-        swalWithBootstrapButtons.fire({
-            title: "Yakin ingin menghapus data ini?",
-            text: "Data tidak dapat dikembalikan!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Mengonfirmasi penghapusan
-                swalWithBootstrapButtons.fire(
-                    'Dihapus!',
-                    'Data telah dihapus.',
-                    'Berhasil'
-                ).then(() => {
-                    // Redirect setelah penghapusan dikonfirmasi
-                    window.location.href = urlToRedirect;
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Batal menghapus
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    'Data batal dihapus :)',
-                    'error'
-                );
-            }
+    // Toggle all columns visibility based on "Tampilkan Semua" checkbox
+    document.getElementById('toggle-all').addEventListener('change', function() {
+        var isChecked = this.checked;
+        document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+            var columnClass = checkbox.getAttribute('data-column');
+            var columns = document.querySelectorAll('.' + columnClass);
+            columns.forEach(function(column) {
+                column.classList.toggle('hidden', !isChecked);
+            });
         });
+    });
+
+    // Initial column visibility based on checkbox state
+    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+        checkbox.checked = false; // All columns are hidden by default
+        var columnClass = checkbox.getAttribute('data-column');
+        var columns = document.querySelectorAll('.' + columnClass);
+        columns.forEach(function(column) {
+            column.classList.add('hidden');
+        });
+    });
+</script>
+
+<script>
+    function goBack() {
+        window.history.back();
     }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        function confirmation(event) {
+            event.preventDefault();
+            const urlToRedirect = event.currentTarget.getAttribute('href');
+
+            swalWithBootstrapButtons.fire({
+                title: "Yakin ingin menghapus data ini?",
+                text: "Data tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mengonfirmasi penghapusan
+                    swalWithBootstrapButtons.fire(
+                        'Dihapus!',
+                        'Data telah dihapus.',
+                        'Berhasil'
+                    ).then(() => {
+                        // Redirect setelah penghapusan dikonfirmasi
+                        window.location.href = urlToRedirect;
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Batal menghapus
+                    swalWithBootstrapButtons.fire(
+                        'Cancelled',
+                        'Data batal dihapus :)',
+                        'error'
+                    );
+                }
+            });
+        }
+    </script>

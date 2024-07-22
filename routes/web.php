@@ -35,6 +35,7 @@ Route::post('add_order', [HomeController::class, 'add_order']);
 Route::get('/edit_order/{id}', [HomeController::class, 'edit_order']);
 Route::post('/update_order/{id}', [HomeController::class, 'update_order']);
 Route::get('/delete_order/{id}', [HomeController::class, 'delete_order']);
+Route::get('/showDetail/{id}', [ProductController::class, 'showDetails']);
 
 Route::get('/view_product', [ProductController::class, 'view_product']);
 Route::get('/view_addproduct', [ProductController::class, 'view_addproduct']);
@@ -42,6 +43,7 @@ Route::post('add_product', [ProductController::class, 'add_product']);
 Route::get('/edit_product/{id}', [ProductController::class, 'edit_product']);
 Route::post('/update_product/{id}', [ProductController::class, 'update_product']);
 Route::get('/delete_product/{id}', [ProductController::class, 'delete_product']);
+Route::get('/showDetails/{id}', [InventarisController::class, 'showDetails']);
 
 Route::get('/view_kontraktor', [ProductController::class, 'view_kontraktor']);
 
@@ -49,6 +51,7 @@ Route::get('/show_order', [InventarisController::class, 'show_order'])->name('sh
 Route::get('/show_order', [InventarisController::class, 'show_order'])->name('orders.show');
 Route::get('/edit_pesanan/{id}', [InventarisController::class, 'edit_pesanan']);
 Route::post('/update_pesanan/{id}', [InventarisController::class, 'update_pesanan']);
+Route::get('/detail_pesanan/{id}', [InventarisController::class, 'detail_pesanan']);
 Route::get('/filter_order', [InventarisController::class, 'show_order'])->name('filter_order');
 Route::get('/export-pdf', [InventarisController::class, 'exportPDF'])->name('export.pdf');
 
@@ -56,11 +59,11 @@ Route::get('/show_kontraktor', [InventarisController::class, 'show_kontraktor'])
 Route::get('/show_subkontraktor', [InventarisController::class, 'show_subkontraktor']);
 Route::post('/add_subkontraktor', [InventarisController::class, 'add_subkontraktor']);
 Route::get('/edit_sub/{id}', [InventarisController::class, 'edit_sub']);
-Route::post('/update_sub/{id}', [InventarisController::class, 'update_sub']);
+Route::put('/update_sub/{id}', [InventarisController::class, 'update_sub']);
 Route::get('/delete_sub/{id}', [InventarisController::class, 'delete_sub']);
 
 
-
+Route::post('/send-message-whatsapp', [InventarisController::class, 'sendMessageToWhatsApp']);
 
 
 

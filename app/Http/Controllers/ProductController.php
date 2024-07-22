@@ -110,4 +110,14 @@ public function delete_product($id)
         $subkontraktors = Subcontractors::paginate(4);
         return view('manager.subkontraktor.index', compact('subkontraktors'));
     }
+
+    public function showDetails($id)
+    {
+        $subkontraktor = Subcontractors::with('materials')->find($id);
+        if (!$subkontraktor) {
+            return redirect()->back()->with('error', 'Subkontraktor tidak ditemukan');
+        }
+
+        return view('manager.subkontraktor.details', compact('subkontraktor'));
+    }
 }
