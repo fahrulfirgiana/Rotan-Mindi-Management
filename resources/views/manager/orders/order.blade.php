@@ -109,7 +109,7 @@
                                                 
                                                 
                                                 <div class="table-responsive">
-                                                    <table class="table table-striped table-hover"" id="order-table">
+                                                    <table class="table table-striped table-hover" id="order-table">
                                                         <thead>
                                                             <tr>
                                                                 <th>Nama Produk</th>
@@ -118,6 +118,9 @@
                                                                 <th>Kuantitas</th>
                                                                 <th>Harga</th>
                                                                 <th>Total</th>
+                                                                <th>Pajak</th>
+                                                                <th>Biaya Pengiriman</th>
+                                                                <th>Total Keseluruhan</th>
                                                                 <th>Batas Waktu</th>
                                                                 <th class="progress-column hidden">Progress</th>
                                                                 <th class="subkontraktor-column hidden">Sub-Kontraktor</th>
@@ -131,19 +134,19 @@
                                                             @foreach ($orders as $item)
                                                                 <tr>
                                                                     <td>{{ $item->product_name }}</td>
-                                                                    <td><img src="{{ url('order') . '/' . $item->image }}"
-                                                                            alt=""></td>
+                                                                    <td><img src="{{ url('order') . '/' . $item->image }}" alt=""></td>
                                                                     <td>{{ $item->size }}</td>
                                                                     <td>{{ $item->quantity }}</td>
                                                                     <td>@currency($item->price)</td>
                                                                     <td>@currency($item->total_price)</td>
+                                                                    <td>@currency($item->tax)</td>
+                                                                    <td>@currency($item->shipping_fee)</td>
+                                                                    <td>@currency($item->total_with_tax_and_shipping)</td>
                                                                     <td class="order-date">{{ $item->deadline }}</td>
-                                                                    <td class="progress-column hidden">
-                                                                        {{ $item->progress ?? 'kosong' }}</td>
-                                                                    <td class="subkontraktor-column hidden">
-                                                                        {{ $item->subkontraktor_name ?? 'kosong' }}</td>
-                                                            <td  class="customer_name-column hidden">{{ $item->customer_name }}</td>
-                                                            <td  class="address-column hidden">{{ $item->address }}</td>
+                                                                    <td class="progress-column hidden">{{ $item->progress ?? 'kosong' }}</td>
+                                                                    <td class="subkontraktor-column hidden">{{ $item->subkontraktor_name ?? 'kosong' }}</td>
+                                                                    <td class="customer_name-column hidden">{{ $item->customer_name }}</td>
+                                                                    <td class="address-column hidden">{{ $item->address }}</td>
                                                                     <td class="status-column hidden">
                                                                         {!! $item->status == 'Selesai'
                                                                             ? '<span class="badge bg-success">Selesai</span>'
@@ -152,24 +155,17 @@
                                                                                 : $item->status ?? 'kosong') !!}
                                                                     </td>
                                                                     <td>
-                                                                        <a class="btn-edit"
-                                                                            href='{{ url('edit_order', $item->id) }}'
-                                                                            title="Edit">
-                                                                            <i class="fa-regular fa-pen-to-square"
-                                                                                data-feather="edit"></i>
+                                                                        <a class="btn-edit" href='{{ url('edit_order', $item->id) }}' title="Edit">
+                                                                            <i class="fa-regular fa-pen-to-square" data-feather="edit"></i>
                                                                         </a>
-                                                                        <a onclick="confirmation(event)"
-                                                                            class="btn-hapus"
-                                                                            href="{{ url('delete_order', $item->id) }}"
-                                                                            title="Delete">
-                                                                            <i class="fa-solid fa-trash"
-                                                                                data-feather="trash-2"></i>
+                                                                        <a onclick="confirmation(event)" class="btn-hapus" href="{{ url('delete_order', $item->id) }}" title="Delete">
+                                                                            <i class="fa-solid fa-trash" data-feather="trash-2"></i>
                                                                         </a>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>
-                                                    </table>
+                                                    </table>    
                                                 </div>
                                                 <!-- Pagination Links -->
                                                 <div class="pagination">

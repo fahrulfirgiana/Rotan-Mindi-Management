@@ -177,44 +177,54 @@ class InventarisController extends Controller
     }
 
     public function sendMessageToWhatsApp(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'phone' => 'required|string',
-            'message' => 'required|string',
-        ]);
+{
+    // Validasi input
+    $request->validate([
+        'order_id' => 'required|integer',
+    ]);
 
-        // Inisialisasi client Guzzle
-        $client = new \GuzzleHttp\Client();
+    $order = Orders::findOrFail($request->order_id);
+    $subkontraktor = Subcontractors::where('subkontraktor_name', $order->subkontraktor_name)->first();
 
-        // API Endpoint dan Token
-        $url = 'https://api.fonnte.com/send';
-        $token = '#!vhWSuXnDuo938mFbj@';
-
-        // Kirim permintaan API
-        $response = $client->post($url, [
-            'headers' => [
-                'Authorization' => $token,
-            ],
-            'form_params' => [
-                'target' => $request->phone,
-                'message' => $request->message,
-                'countryCode' => '62', // Kode negara, misalnya 62 untuk Indonesia
-            ],
-        ]);
-
-        // Periksa respons dari Fonnte
-        $statusCode = $response->getStatusCode();
-        $body = json_decode($response->getBody(), true);
-
-        if ($statusCode == 200 && isset($body['status']) && $body['status'] == 'success') {
-            Alert::success('Berhasil', 'Pesan berhasil dikirim ke WhatsApp');
-        } else {
-            Alert::error('Gagal', 'Gagal mengirim pesan ke WhatsApp');
-        }
-
+    if (!$subkontraktor) {
+        Alert::error('Gagal', 'Subkontraktor tidak ditemukan');
         return redirect()->back();
     }
+
+    $phone = $subkontraktor->contact;
+    $message = "Pesanan untuk {$order->subkontraktor_name}:\nProduk: {$order->product_name}\nUkuran: {$order->size}\nKuantitas: {$order->quantity}\nHarga: {$order->price}";
+
+    // Inisialisasi client Guzzle
+    $client = new \GuzzleHttp\Client();
+
+    // API Endpoint dan Token
+    $url = 'https://api.fonnte.com/send';
+    $token = '#!vhWSuXnDuo938mFbj@';
+
+    // Kirim permintaan API
+    $response = $client->post($url, [
+        'headers' => [
+            'Authorization' => $token,
+        ],
+        'form_params' => [
+            'target' => $phone,
+            'message' => $message,
+            'countryCode' => '62', // Kode negara, misalnya 62 untuk Indonesia
+        ],
+    ]);
+
+    // Periksa respons dari Fonnte
+    $statusCode = $response->getStatusCode();
+    $body = json_decode($response->getBody(), true);
+
+    if ($statusCode == 200 && isset($body['status']) && $body['status'] == 'success') {
+        Alert::success('Berhasil', 'Pesan berhasil dikirim ke WhatsApp');
+    } else {
+        Alert::error('Gagal', 'Gagal mengirim pesan ke WhatsApp');
+    }
+
+    return redirect()->back();
+}
 
     // SECTION SUB-KONTRAKTOR
 

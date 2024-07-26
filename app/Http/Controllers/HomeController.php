@@ -96,6 +96,21 @@ private function calculateProgress($order)
     return view('manager.dashboard', compact('orders', 'totalOrders', 'totalProduction', 'totalProducts', 'totalSubcontractors', 'topProducts', 'monthlyOrders', 'productions', 'totalInProgress'));
     }
 
+    private function calculateTaxesAndFees($order)
+    {
+        $taxRate = 0.10; // Tarif pajak 10%
+        $shippingFee = 100000; // Biaya pengiriman tetap sebesar Rp 100.000
+
+        $tax = $order->total_price * $taxRate;
+        $totalWithTaxAndShipping = $order->total_price + $tax + $shippingFee;
+
+        return [
+            'tax' => $tax,
+            'shipping_fee' => $shippingFee,
+            'total_with_tax_and_shipping' => $totalWithTaxAndShipping
+        ];
+    }
+
     public function view_order(Request $request)
     {
         if ($request->start_date || $request->end_date) {
@@ -106,8 +121,16 @@ private function calculateProgress($order)
             $orders = Orders::paginate(5);
         }
 
+        foreach ($orders as $order) {
+            $calculations = $this->calculateTaxesAndFees($order);
+            $order->tax = $calculations['tax'];
+            $order->shipping_fee = $calculations['shipping_fee'];
+            $order->total_with_tax_and_shipping = $calculations['total_with_tax_and_shipping'];
+        }
+
         return view('manager.orders.order', compact('orders'));
     }
+
 
 
     public function view_addorder()

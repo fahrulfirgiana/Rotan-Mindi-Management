@@ -2,16 +2,16 @@
 <html lang="en">
 
 <head>
-    @include('inventaris.css')
+    @include('manager.css')
 </head>
 
 <body>
     @include('sweetalert::alert')
     <div class="wrapper">
-        @include('inventaris.sidebar')
+        @include('manager.sidebar')
 
         <div class="main">
-            @include('inventaris.navbar')
+            @include('manager.navbar')
 
             <main class="content" style="padding: 10px">
                 <div class="container-fluid p-0">
@@ -82,12 +82,12 @@
                 </main>
 
                 <footer class="footer">
-                    @include('inventaris.footer')
+                    @include('manager.footer')
                 </footer>
             </div>
         </div>
 
-        @include('inventaris.js')
+        @include('manager.js')
     </div>
 </body>
 
